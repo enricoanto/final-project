@@ -1,4 +1,4 @@
-package routes
+package middleware
 
 import (
 	"errors"
@@ -26,28 +26,19 @@ func ParseToken(token string) (*jwt.Token, jwt.MapClaims, error) {
 }
 
 func GetTokenHeader(c *gin.Context) string {
-	sign := strings.Split(c.Request.Header.Get("Authorization"), " ")
-	return sign[1]
+	sign := strings.ReplaceAll(c.Request.Header.Get("Authorization"), "Bearer ", "")
+	return sign
 }
 
-func(controller *Controller) Middleware(role string) gin.HandlerFunc {
+func (controller *Controller) Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user, err := Claims(c)
+		_, err := Claims(c)
 		if err != nil {
 			helper.Error(c, http.StatusUnauthorized, errors.New("invalid token"))
 			c.Abort()
 			return
 		}
 
-		if user["role"].(string) != "admin" || role != "admin" {
-			helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
-			c.Abort()
-			return
-		}
-
-		if role == "customer" {
-			c.Next()
-		}
 		c.Next()
 	}
 }

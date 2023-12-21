@@ -1,12 +1,14 @@
 package product
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/enricoanto/final-project/helper"
 	model "github.com/enricoanto/final-project/repository"
+	"github.com/enricoanto/final-project/routes/middleware"
 
 	productService "github.com/enricoanto/final-project/service/product"
 	"github.com/gin-gonic/gin"
@@ -23,6 +25,14 @@ func NewController(productService *productService.Service) *Controller {
 }
 
 func (controller *Controller) CreateProduct(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
 	var request ProductRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -56,18 +66,26 @@ func (controller *Controller) CreateProduct(c *gin.Context) {
 }
 
 func (controller *Controller) FetchListProducts(c *gin.Context) {
-	categories, err := controller.productService.FetchListProducts()
+	products, err := controller.productService.FetchListProducts()
 	if err != nil {
 		helper.Error(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	response := transformToProductsResponse(categories)
+	response := transformToProductsResponse(products)
 
 	helper.Success(c, http.StatusOK, response)
 }
 
 func (controller *Controller) UpdateProduct(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("productId"))
 	var request ProductRequest
 
@@ -103,6 +121,14 @@ func (controller *Controller) UpdateProduct(c *gin.Context) {
 }
 
 func (controller *Controller) DeleteProduct(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("productId"))
 
 	err := controller.productService.DeleteProduct(id)

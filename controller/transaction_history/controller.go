@@ -1,13 +1,13 @@
 package transactionhistory
 
 import (
+	"errors"
 	"net/http"
-	// "strconv"
-	// "time"
 
 	"github.com/enricoanto/final-project/helper"
 	model "github.com/enricoanto/final-project/repository"
 
+	"github.com/enricoanto/final-project/routes/middleware"
 	"github.com/enricoanto/final-project/service/transaction_history"
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +23,10 @@ func NewController(transactionHistoryService *transactionhistory.Service) *Contr
 }
 
 func (controller *Controller) CreateTransactionHistory(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	userID, _ := claims["id"].(float64)
+
 	var request TransactionHistoryRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -38,7 +42,7 @@ func (controller *Controller) CreateTransactionHistory(c *gin.Context) {
 	transactionHistory := model.TransactionHistory{
 		ProductID: request.ProductID,
 		Quantity:  request.Quantity,
-		UserID:    1,
+		UserID:    int(userID),
 	}
 
 	transactionHistory, err := controller.transactionHistoryService.CreateTransactionHistory(transactionHistory)
@@ -50,4 +54,43 @@ func (controller *Controller) CreateTransactionHistory(c *gin.Context) {
 	response := transformToCreateResponse(transactionHistory)
 
 	helper.Success(c, http.StatusCreated, response)
+}
+
+func (controller *Controller) MyTransaction(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	userID, _ := claims["id"].(float64)
+
+	filter := model.TransactionHistory{
+		UserID: int(userID),
+	}
+
+	transactions, err := controller.transactionHistoryService.FetchListTransactionHistories(filter)
+	if err != nil {
+		helper.Error(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	response := transformToMyTransactions(transactions)
+
+	helper.Success(c, http.StatusOK, response)
+}
+
+func (controller *Controller) UserTransaction(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
+	transactions, err := controller.transactionHistoryService.FetchListTransactionHistories(model.TransactionHistory{})
+	if err != nil {
+		helper.Error(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	response := transformToUserTransactions(transactions)
+	helper.Success(c, http.StatusOK, response)
 }

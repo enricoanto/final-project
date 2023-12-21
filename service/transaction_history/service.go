@@ -14,7 +14,7 @@ type Service struct {
 	transactionHistoryRepository *transactionHistory.Repository
 	categoryService              *category.Service
 	productService               *product.Service
-	userService *user.Service
+	userService                  *user.Service
 }
 
 func NewService(
@@ -55,7 +55,7 @@ func (s *Service) CreateTransactionHistory(transactionHistory model.TransactionH
 		return model.TransactionHistory{}, errors.New("balance insufficient")
 	}
 
-	_, err = s.userService.UpdateBalance(transactionHistory.UserID, - transactionHistory.TotalPrice)
+	_, err = s.userService.UpdateBalance(transactionHistory.UserID, -transactionHistory.TotalPrice)
 
 	product, err = s.productService.UpdateProduct(product)
 	if err != nil {

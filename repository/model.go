@@ -34,13 +34,13 @@ type (
 	}
 
 	TransactionHistory struct {
-		ID         int
-		ProductID  int
-		UserID     int
-		Quantity   int
-		TotalPrice int
-		Product    Product
-		User       User
+		ID         int     `json:"id"`
+		ProductID  int     `json:"product_id"`
+		UserID     int     `json:"user_id"`
+		Quantity   int     `json:"quantity"`
+		TotalPrice int     `json:"total_price"`
+		Product    Product `json:"Product"`
+		User       User    `json:"User"`
 		CreatedAt  time.Time
 		UpdatedAt  time.Time
 	}

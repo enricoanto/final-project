@@ -1,12 +1,14 @@
 package category
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/enricoanto/final-project/helper"
 	model "github.com/enricoanto/final-project/repository"
+	"github.com/enricoanto/final-project/routes/middleware"
 
 	categoryService "github.com/enricoanto/final-project/service/category"
 	"github.com/gin-gonic/gin"
@@ -23,6 +25,15 @@ func NewController(categoryService *categoryService.Service) *Controller {
 }
 
 func (controller *Controller) CreateCategory(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
 	var request CategoryRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -52,6 +63,14 @@ func (controller *Controller) CreateCategory(c *gin.Context) {
 }
 
 func (controller *Controller) FetchListCategories(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
 	categories, err := controller.categoryService.FetchListCategories()
 	if err != nil {
 		helper.Error(c, http.StatusInternalServerError, err)
@@ -64,6 +83,14 @@ func (controller *Controller) FetchListCategories(c *gin.Context) {
 }
 
 func (controller *Controller) UpdateCategory(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("categoryId"))
 	var request CategoryRequest
 
@@ -96,6 +123,14 @@ func (controller *Controller) UpdateCategory(c *gin.Context) {
 }
 
 func (controller *Controller) DeleteCategory(c *gin.Context) {
+	claims, _ := middleware.Claims(c)
+
+	role, _ := claims["role"].(string)
+	if role != "admin" {
+		helper.Error(c, http.StatusUnauthorized, errors.New("access denied"))
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("categoryId"))
 
 	err := controller.categoryService.DeleteCategory(id)

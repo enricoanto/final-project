@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/enricoanto/final-project/config"
 	"github.com/enricoanto/final-project/routes"
+	"github.com/enricoanto/final-project/routes/middleware"
 	"github.com/gin-gonic/gin"
 	"log"
 
@@ -48,7 +49,7 @@ func main() {
 	categoryController := categoryController.NewController(categoryService)
 	productController := productController.NewController(productService)
 	transactionHistoryController := transactionHistoryController.NewController(transactionHistoryService)
-	middlewareController := routes.NewController()
+	middlewareController := middleware.NewController()
 
 	routes.API(
 		r,

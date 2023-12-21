@@ -6,6 +6,7 @@ import (
 
 	"github.com/enricoanto/final-project/helper"
 	model "github.com/enricoanto/final-project/repository"
+	"github.com/enricoanto/final-project/routes/middleware"
 
 	userService "github.com/enricoanto/final-project/service/user"
 	"github.com/gin-gonic/gin"
@@ -85,7 +86,11 @@ func (controller *Controller) Login(c *gin.Context) {
 }
 
 func (controller *Controller) UpdateBalance(c *gin.Context) {
-	var updateBalance RegisterRequest
+	var updateBalance BalanceRequest
+
+	claims, _ := middleware.Claims(c)
+
+	userID, _ := claims["id"].(float64)
 
 	if err := c.ShouldBindJSON(&updateBalance); err != nil {
 		helper.Error(c, http.StatusBadRequest, err)
@@ -97,7 +102,7 @@ func (controller *Controller) UpdateBalance(c *gin.Context) {
 		return
 	}
 
-	balance, err := controller.userService.UpdateBalance(2, updateBalance.Balance)
+	balance, err := controller.userService.UpdateBalance(int(userID), updateBalance.Balance)
 	if err != nil {
 		helper.Error(c, http.StatusInternalServerError, err)
 		return
