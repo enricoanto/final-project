@@ -8,6 +8,7 @@ import (
 	"github.com/enricoanto/final-project/helper"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 )
 
 type Controller struct{}
@@ -19,7 +20,7 @@ func NewController() *Controller {
 func ParseToken(token string) (*jwt.Token, jwt.MapClaims, error) {
 	claims := jwt.MapClaims{}
 	jwtToken, err := jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
-		return []byte("Rahasia"), nil
+		return []byte(viper.GetString("JWT_SIGNED")), nil
 	})
 
 	return jwtToken, claims, err

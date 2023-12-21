@@ -5,6 +5,7 @@ import (
 	"github.com/enricoanto/final-project/routes"
 	"github.com/enricoanto/final-project/routes/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"log"
 
 	// Controller
@@ -60,7 +61,7 @@ func main() {
 		middlewareController,
 	)
 
-	if err := r.Run(":8080"); err != nil {
+	if err := r.Run(":" + viper.GetString("PORT")); err != nil {
 		log.Fatal("Failed to run server:", err)
 	}
 }
