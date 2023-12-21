@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 
+	"github.com/enricoanto/final-project/helper"
 	model "github.com/enricoanto/final-project/repository"
 	"gorm.io/gorm"
 )
@@ -33,7 +34,7 @@ func (r *Repository) FindBy(user model.User) (model.User, error) {
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			return model.User{}, errors.New("user not found")
+			return model.User{}, errors.New(helper.USER_NOT_FOUND)
 		default:
 			return model.User{}, err
 		}
@@ -51,7 +52,7 @@ func (r *Repository) UpdateBalance(userID int, balance int) error {
 	}
 
 	if db.RowsAffected < 1 {
-		return errors.New("user not found")
+		return errors.New(helper.USER_NOT_FOUND)
 	}
 
 	return nil

@@ -2,14 +2,14 @@ package product
 
 import (
 	model "github.com/enricoanto/final-project/repository"
-	productRepository "github.com/enricoanto/final-project/repository/product"
+	"github.com/enricoanto/final-project/repository/product"
 )
 
 type Service struct {
-	productRepository *productRepository.Repository
+	productRepository *product.Repository
 }
 
-func NewService(productRepository *productRepository.Repository) *Service {
+func NewService(productRepository *product.Repository) *Service {
 	return &Service{
 		productRepository: productRepository,
 	}
@@ -34,4 +34,8 @@ func (s *Service) UpdateProduct(product model.Product) (model.Product, error) {
 
 func (s *Service) DeleteProduct(productID int) error {
 	return s.productRepository.DeleteProduct(productID)
+}
+
+func (s *Service) FetchProductByID(productID int) (model.Product, error) {
+	return s.productRepository.FetchProductByID(productID)
 }

@@ -3,6 +3,7 @@ package category
 import (
 	"errors"
 
+	"github.com/enricoanto/final-project/helper"
 	model "github.com/enricoanto/final-project/repository"
 	"gorm.io/gorm"
 )
@@ -45,7 +46,7 @@ func (r *Repository) FetchCategoryByID(categoryID int) (model.Category, error) {
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			return model.Category{}, errors.New("category not found")
+			return model.Category{}, errors.New(helper.CATEGORY_NOT_FOUND)
 		default:
 			return model.Category{}, err
 		}
@@ -53,15 +54,15 @@ func (r *Repository) FetchCategoryByID(categoryID int) (model.Category, error) {
 	return category, nil
 }
 
-func (r *Repository) UpdateCategory(categoryID int, categoryType string) error {
-	db := r.DB.Model(&model.Category{}).Where("id = ?", categoryID).Update("type", categoryType)
+func (r *Repository) UpdateCategory(category model.Category) error {
+	db := r.DB.Model(&model.Category{}).Where("id = ?", category.ID).Updates(category)
 	err := db.Error
 	if err != nil {
 		return err
 	}
 
 	if db.RowsAffected < 1 {
-		return errors.New("category not found")
+		return errors.New(helper.CATEGORY_NOT_FOUND)
 	}
 	return nil
 }

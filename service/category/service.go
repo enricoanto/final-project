@@ -2,14 +2,14 @@ package category
 
 import (
 	model "github.com/enricoanto/final-project/repository"
-	categoryRepository "github.com/enricoanto/final-project/repository/category"
+	"github.com/enricoanto/final-project/repository/category"
 )
 
 type Service struct {
-	categoryRepository *categoryRepository.Repository
+	categoryRepository *category.Repository
 }
 
-func NewService(categoryRepository *categoryRepository.Repository) *Service {
+func NewService(categoryRepository *category.Repository) *Service {
 	return &Service{
 		categoryRepository: categoryRepository,
 	}
@@ -23,15 +23,19 @@ func (s *Service) FetchListCategories() ([]model.Category, error) {
 	return s.categoryRepository.FetchListCategories()
 }
 
-func (s *Service) UpdateCategory(categoryID int, categoryType string) (model.Category, error) {
-	err := s.categoryRepository.UpdateCategory(categoryID, categoryType)
+func (s *Service) UpdateCategory(category model.Category) (model.Category, error) {
+	err := s.categoryRepository.UpdateCategory(category)
 	if err != nil {
 		return model.Category{}, err
 	}
 
-	return s.categoryRepository.FetchCategoryByID(categoryID)
+	return s.categoryRepository.FetchCategoryByID(category.ID)
 }
 
 func (s *Service) DeleteCategory(categoryID int) error {
 	return s.categoryRepository.DeleteCategory(categoryID)
+}
+
+func (s *Service) FetchCategoryByID(categoryID int) (model.Category, error) {
+	return s.categoryRepository.FetchCategoryByID(categoryID)
 }

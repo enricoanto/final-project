@@ -39,6 +39,8 @@ type (
 		UserID     int
 		Quantity   int
 		TotalPrice int
+		Product    Product
+		User       User
 		CreatedAt  time.Time
 		UpdatedAt  time.Time
 	}

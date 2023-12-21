@@ -49,7 +49,6 @@ func (controller *Controller) CreateCategory(c *gin.Context) {
 	response := transformToCategoryResponse(category)
 
 	helper.Success(c, http.StatusCreated, response)
-
 }
 
 func (controller *Controller) FetchListCategories(c *gin.Context) {
@@ -79,10 +78,11 @@ func (controller *Controller) UpdateCategory(c *gin.Context) {
 	}
 
 	category := model.Category{
+		ID:   id,
 		Type: request.Type,
 	}
 
-	category, err := controller.categoryService.UpdateCategory(id, category.Type)
+	category, err := controller.categoryService.UpdateCategory(category)
 	if err != nil {
 		helper.Error(c, http.StatusInternalServerError, err)
 		return

@@ -9,16 +9,19 @@ import (
 	// Controller
 	categoryController "github.com/enricoanto/final-project/controller/category"
 	productController "github.com/enricoanto/final-project/controller/product"
+	transactionHistoryController "github.com/enricoanto/final-project/controller/transaction_history"
 	userController "github.com/enricoanto/final-project/controller/user"
 
 	// Repository
 	categoryRepository "github.com/enricoanto/final-project/repository/category"
 	productRepository "github.com/enricoanto/final-project/repository/product"
+	transactionHistoryRepository "github.com/enricoanto/final-project/repository/transaction_history"
 	userRepository "github.com/enricoanto/final-project/repository/user"
 
 	// Service
 	categoryService "github.com/enricoanto/final-project/service/category"
 	productService "github.com/enricoanto/final-project/service/product"
+	transactionHistoryService "github.com/enricoanto/final-project/service/transaction_history"
 	userService "github.com/enricoanto/final-project/service/user"
 )
 
@@ -26,23 +29,34 @@ func main() {
 	r := gin.Default()
 	DB := config.DB
 
-	userRepository := userRepository.NewRepository(DB)
-	userService := userService.NewService(userRepository)
-	userController := userController.NewController(userService)
-
 	categoryRepository := categoryRepository.NewRepository(DB)
-	categoryService := categoryService.NewService(categoryRepository)
-	categoryController := categoryController.NewController(categoryService)
-
 	productRepository := productRepository.NewRepository(DB)
+	transactionHistoryRepository := transactionHistoryRepository.NewRepository(DB)
+	userRepository := userRepository.NewRepository(DB)
+
+	userService := userService.NewService(userRepository)
+	categoryService := categoryService.NewService(categoryRepository)
 	productService := productService.NewService(productRepository)
+	transactionHistoryService := transactionHistoryService.NewService(
+		transactionHistoryRepository,
+		categoryService,
+		productService,
+		userService,
+	)
+
+	userController := userController.NewController(userService)
+	categoryController := categoryController.NewController(categoryService)
 	productController := productController.NewController(productService)
+	transactionHistoryController := transactionHistoryController.NewController(transactionHistoryService)
+	middlewareController := routes.NewController()
 
 	routes.API(
 		r,
 		userController,
 		categoryController,
 		productController,
+		transactionHistoryController,
+		middlewareController,
 	)
 
 	if err := r.Run(":8080"); err != nil {

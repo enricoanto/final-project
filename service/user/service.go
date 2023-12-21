@@ -84,3 +84,8 @@ func (s *Service) UpdateBalance(userID int, balance int) (int, error) {
 	}
 	return user.Balance, nil
 }
+
+func (s *Service) FindBy(user model.User) (model.User, error) {
+	return s.userRepository.FindBy(user)
+}
+
