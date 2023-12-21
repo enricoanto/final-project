@@ -15,22 +15,22 @@ type (
 	}
 
 	Product struct {
-		ID        int       `json:"id"`
-		Title     string    `json:"title"`
-		Price     int       `json:"price"`
-		Stock     int       `json:"stock"`
-		CategoryID int `json:"category_id"`
-		CreatedAt time.Time `json:"created_at"`
-		UpdatedAt time.Time `json:"updated_at"`
+		ID         int       `json:"id"`
+		Title      string    `json:"title"`
+		Price      int       `json:"price"`
+		Stock      int       `json:"stock"`
+		CategoryID int       `json:"category_id"`
+		CreatedAt  time.Time `json:"created_at"`
+		UpdatedAt  time.Time `json:"updated_at"`
 	}
 
 	Category struct {
-		ID                int `json:"id"`
-		Type              string `json:"type"`
-		SoldProductAmount int `json:"sold_product_amount"`
-		Products          []Product `json:"Products,omitempty"`
-		CreatedAt         time.Time `json:"created_at,omitempty"`
-		UpdatedAt         time.Time `json:"updated_at,omitempty"`
+		ID                int
+		Type              string
+		SoldProductAmount int
+		Products          []Product
+		CreatedAt         time.Time
+		UpdatedAt         time.Time
 	}
 
 	TransactionHistory struct {

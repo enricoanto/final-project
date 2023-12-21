@@ -13,10 +13,10 @@ type (
 	}
 
 	CategoryResponse struct {
-		ID                int       `json:"id"`
-		Type              string    `json:"type"`
-		SoldProductAmount int       `json:"sold_product_amount"`
-		Products []Product `json:",omitempty"`
+		ID                int        `json:"id"`
+		Type              string     `json:"type"`
+		SoldProductAmount int        `json:"sold_product_amount"`
+		Products          []Product  `json:",omitempty"`
 		CreatedAt         *time.Time `json:"created_at,omitempty"`
 		UpdatedAt         *time.Time `json:"updated_at,omitempty"`
 	}
@@ -36,11 +36,11 @@ type (
 )
 
 func transformToCategoryResponse(data model.Category) CategoryResponse {
-	response :=  CategoryResponse{
+	response := CategoryResponse{
 		ID:                data.ID,
 		Type:              data.Type,
 		SoldProductAmount: data.SoldProductAmount,
-		Products: transformProduct(data.Products),
+		Products:          transformProduct(data.Products),
 	}
 
 	if data.CreatedAt.Unix() != 0 {
@@ -69,5 +69,5 @@ func transformProduct(products []model.Product) []Product {
 
 	json.Unmarshal(js, &response)
 
-return response
+	return response
 }

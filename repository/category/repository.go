@@ -29,7 +29,9 @@ func (r *Repository) CreateCategory(category model.Category) (model.Category, er
 func (r *Repository) FetchListCategories() ([]model.Category, error) {
 	data := []model.Category{}
 
-	err := r.DB.Preload("Products").Find(&data).Error
+	err := r.DB.Preload("Products", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("id ASC")
+	}).Order("id ASC").Find(&data).Error
 	if err != nil {
 		return []model.Category{}, err
 	}

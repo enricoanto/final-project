@@ -44,7 +44,7 @@ func (controller *Controller) CreateCategory(c *gin.Context) {
 		helper.Error(c, http.StatusInternalServerError, err)
 		return
 	}
-	category.UpdatedAt = time.Unix(0,0)
+	category.UpdatedAt = time.Unix(0, 0)
 
 	response := transformToCategoryResponse(category)
 
@@ -88,7 +88,7 @@ func (controller *Controller) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	category.CreatedAt = time.Unix(0,0)
+	category.CreatedAt = time.Unix(0, 0)
 
 	response := transformToCategoryResponse(category)
 
